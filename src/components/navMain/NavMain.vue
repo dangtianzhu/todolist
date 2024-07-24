@@ -2,26 +2,27 @@
   <div>
     <div v-if="list.length > 0">
       <div v-for="(item, index) in list" :key="index">
-        <div>正在进行{{ isComplete }}</div>
         <div class="item">
           <input type="checkbox" v-model="item.complete" />
-          {{ item.title }}
+          <span v-if="!item.editing">{{ item.title }}</span>
+          <input v-else type="text" v-model="item.title" @keyup.enter="completeEdit(index)" />
           <button class="del" @click="del(item, index)">删除</button>
-          <button class="update" @click="update(item, index)">修改</button>
+          <button class="update" @click="toggleEdit(item)">修改</button>
+          <button v-if="item.editing" class="update" @click="completeEdit(index)">完成</button>
         </div>
       </div>
     </div>
     <div v-else>
-        暂无任务
+      暂无任务
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
-// import {useStore} from 'vuex'
+import { defineComponent } from "vue";
+
 export default defineComponent({
-  name: "navMain",
+  name: "NavMain",
   props: {
     list: {
       type: Array,
@@ -30,32 +31,29 @@ export default defineComponent({
   },
 
   setup(props, ctx) {
-    let doing = ref(1);
-
     let del = (item, index) => {
       ctx.emit("del", index);
     };
-    let update = (item, index) => {
-      console.log(item);
+
+    let toggleEdit = (item) => {
+      item.editing = true; // 设置编辑状态为true
     };
+
+    let completeEdit = (index) => {
+      let item = props.list[index];
+      item.editing = false; // 设置编辑状态为false，完成编辑
+    };
+
     return {
-      doing,
       del,
-      update,
+      toggleEdit,
+      completeEdit,
     };
   },
 });
 </script>
 
 <style lang="less" scoped>
-// .item {
-//   height: 55px;
-//   line-height: 90px;
-//   position: relative;
-//   width: 160px;
-
-// }
-
 .item {
   display: flex;
   align-items: center;

@@ -32,10 +32,8 @@ export default createStore({
     clear(state,payload){
       //过滤之后的数组传进来
       state.list = payload
-    },
-    updateTodo(state,payload){
-      
     }
+    
   },
   actions: {
   },
